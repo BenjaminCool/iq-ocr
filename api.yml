@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  title: IQ:API
+  version: 0.0.1 
+  description: This is a sample server for a pet store.
+  termsOfService: http://iqplugins.com/terms/
+  contact:
+    name: Benjamin Cool
+    email: bcool@iqplugins.com
+    url: https://iqplugins.com/
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+externalDocs:
+  description: IQ Documentation
+  url: https://iqplugins.com/
+
+servers:
+  - url: /api/v1
+
+components:
+  securitySchemes:
+    apiToken:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    OCR:
+      type: object
+      properties:
+        text_blocks:
+          $ref: '#/components/schemas/TextBlock'
+        word_count:
+          type: integer
+          description: then number of words detected
+    TextBlock:
+      type: object
+      properties:
+        bounding_box:
+          description: A list of four pixel location values from the top left corner (min_x, min_y, max_x, max_y)
+          type: array
+          items:
+            type: integer
+          minItems: 4
+          maxItems: 4
+        text:
+          type: string
+          description: the text within the bounding bounding
+        confidence:
+          type: integer
+          description: the percent likelihood that the text was interpereted correctly
+    FullText:
+      type: string
+      description: the full text from the entire image
+
+security:
+  - apiToken: []
+
+paths:
+  /ocr/:
+    post:
+      summary: identifies text in an image
+      tags:
+        - ocr
+        - images
+        - ai
+      requestBody:
+        content:
+          multipart/mixed:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+            encoding:
+              image:
+                headers:
+                  X-Custom-OCR-Type:
+                    description: the OCR Type header that describes the type of document that is being scanned
+                    schema:
+                      type: string
+                    required: false
+      responses:
+        200:
+          description: OK
+          content:
+            image/jpeg:
+              schema: 
+                type: string
+                format: binary
+            application/pdf:
+              schema: 
+                type: string
+                format: binary
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OCR'
+        400:
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+        
+tags:
+  - name: ocr
+    description: Optical Character Recognition
+    externalDocs:
+      url: https://iqplugins.com/iq-products/ocr/ocr-instructions/
+  - name: images
+    description: Image Processing Tools
+    externalDocs:
+      url: https://iqplugins.com/iq-products/image-processing/
+  - name: ai
+    description: Artificial Intelligence
+    externalDocs:
+      url: https://iqplugins.com/iq-products/artificial-intelligence/

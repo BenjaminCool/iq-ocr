@@ -1,0 +1,8 @@
+pytesseract
+flask
+cherrypy
+opencv-python
+numpy
+pillowfight
+pypillowfight
+nltk
