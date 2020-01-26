@@ -1,15 +1,10 @@
 import logging
-from io import BytesIO
-from os import remove
 
 import cherrypy
-import pytesseract as ocr
 import cv2
+import pytesseract as ocr
 from flask import Flask, request
-from PIL import Image
-from werkzeug.debug import DebuggedApplication
-
-from image import OCRImage
+from .image import OCRImage
 
 app = Flask(__name__)
 logger = logging.Logger('IQ: OCR')
@@ -20,24 +15,23 @@ def index():
     img = OCRImage(request.data)
     img.process_image()
     response = {
-    }, 400
-    if(str(request.accept_mimetypes) == 'application/json'):
+               }, 400
+    if (str(request.accept_mimetypes) == 'application/json'):
         print('retrieving json data')
         data = img.tess_data(config='--psm 12 --oem 1')
         response = {
-            'data': data
-        }, 200, {'Content-Type': 'application/json'}
-    elif(str(request.accept_mimetypes) == 'application/pdf'):
+                       'data': data
+                   }, 200, {'Content-Type': 'application/json'}
+    elif (str(request.accept_mimetypes) == 'application/pdf'):
         print('returning pdf')
         response = ocr.image_to_pdf_or_hocr(
-        img.get_image(), extension='pdf', config='--psm 12 --oem 1'), 200, {'Content-Type': 'application/pdf'}
-    elif(str(request.accept_mimetypes) == 'image/png'):
+            img.get_image(), extension='pdf', config='--psm 12 --oem 1'), 200, {'Content-Type': 'application/pdf'}
+    elif (str(request.accept_mimetypes) == 'image/png'):
         print('returning jpeg')
         response = img.cv2_to_string(), 200, {'Content-Type': 'image/png'}
     else:
         print('nope')
-    
-    
+
     return response
 
 
@@ -79,7 +73,7 @@ def boxes():
 def rotate():
     img = OCRImage(request.data)
     angle = img.deskew()
-    logger.info("angle: "+str(angle))
+    logger.info("angle: " + str(angle))
     return img.cv2_to_string(), 200, {'Content-Type': 'image/png'}
 
 

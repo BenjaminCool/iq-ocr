@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: IQ:API
-  version: 0.0.1 
+  version: 0.0.1
   description: This is a sample server for a pet store.
   termsOfService: http://iqplugins.com/terms/
   contact:
@@ -86,11 +86,11 @@ paths:
           description: OK
           content:
             image/jpeg:
-              schema: 
+              schema:
                 type: string
                 format: binary
             application/pdf:
-              schema: 
+              schema:
                 type: string
                 format: binary
             application/json:
@@ -102,7 +102,7 @@ paths:
             text/plain:
               schema:
                 type: string
-        
+
 tags:
   - name: ocr
     description: Optical Character Recognition
